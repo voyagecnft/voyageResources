@@ -11,16 +11,15 @@ import os,json
 # add resource for each asset 
 # print a log file tracking assets for each stake address
 
-def getSisters(assetName,resourceType):
-    with open(f'planetMetadata/{planet}.metadata','r') as f:
-       
-        data=json.load(f)
-        f.close()
-        return data['721']['<policy_id>'][planet]['sisterPlanets']
 
+def fetchAssets():
+    with open('blockfrostKey.txt','r') as f:
+        key=f.read()
+        f.close()
+    
 
 
 
 
 if __name__=="__main__":
-    
+    stakeToAssetMap=fetchAssets()

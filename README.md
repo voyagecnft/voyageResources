@@ -17,7 +17,7 @@ Snapshots are taken throughout the week to check the listed and unlisted NFTs. T
    
 **Resource Multipliers**
 
-**Planet** - If a particular wallet holds sister planets of a particular sister group, there is a resource multiplier for all the planets inside that wallet belonging to that sister group.
+**Planet** - If a particular wallet holds sister planets of a particular sister group, there is a resource multiplier for all the planets inside that wallet belonging to that sister group. The floor value of the obtained resources is provided after applying the resource boost.
     
 |Planets held|Resource Boost|
 |------------|--------------|
