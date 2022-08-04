@@ -8,6 +8,8 @@ import os,json
 # get assets, hashmap for stake key to planets, continents and floating continents -
 # iterate over all assets 
 # if planet - check for multiplier 
+# add resource for each asset 
+# print a log file tracking assets for each stake address
 
 def getSisters(planet):
     with open(f'planetMetadata/{planet}.metadata','r') as f:
@@ -21,4 +23,4 @@ def getSisters(planet):
 
 
 if __name__=="__main__":
-    print(getSisters('Aquapolis55'))
+    
