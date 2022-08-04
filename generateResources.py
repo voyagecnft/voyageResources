@@ -11,7 +11,7 @@ import os,json
 # add resource for each asset 
 # print a log file tracking assets for each stake address
 
-def getSisters(planet):
+def getSisters(assetName,resourceType):
     with open(f'planetMetadata/{planet}.metadata','r') as f:
        
         data=json.load(f)
