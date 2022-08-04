@@ -10,9 +10,9 @@ Snapshots are taken throughout the week to check the listed and unlisted NFTs. T
 
 **Each planet earns a 5% tax from the resource production of each continent on it** 
 
-**Continents** - For calculating resource production of planets, the metadata value is taken and the corresponding resource is added in the wallet at the end of the week.
+**Continents** - For calculating resource production of planets, the metadata value is taken and the corresponding resource is added in the wallet at the end of the week. **The floor value of the resources is provided after paying 5% tax to the host planet.**
 
-**Floating Continents** - Each floating continent produces resources equal to their metadata value and don't give any taxes to their host planets.
+**Floating Continents** - Each floating continent produces resources equal 8 continents(2 for each resource value) and does not have to pay any taxes to its host planet.
 
    
 
