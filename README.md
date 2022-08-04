@@ -15,4 +15,8 @@ Snapshots are taken throughout the week to check the listed and unlisted NFTs. T
 **Floating Continents** - Each floating continent produces resources equal 8 continents(2 for each resource value) and does not have to pay any taxes to its host planet.
 
    
+**Resource Multipliers**
 
+**Planet** - If a particular wallet holds sister planets of a particular sister group, there is a resource multiplier for all the planets inside that wallet belonging to that sister group.
+    
+    hey
