@@ -73,17 +73,39 @@ def fetchAssets(Policies):
         #break # temporary for debugging 
     return stakeToAssetMap
 
+def computeResources(stakeAddress,asset,assets):
+     # compute a particular resource farmed from a particular asset for a particular stake address
+    
+    pass
+
+
 def calculateRewards(inputFile):
     # open existing file and check current rewards
-    stakeToAntimatter,stakeToCrystal,stakeToElixir,stakeToRock={},{},{},{}
-    
+    resources=["Elixir","Rock","Crystal","Antimatter"]
+    files=os.listdir('.')
+   
     with open(inputFile,"r") as csv_file:
         csv_reader=csv.reader(csv_file,delimiter=',')
-        for row in csv_reader:
+        i=0
+        j=0
+        for row in csv_reader: # iterating over all stake addresses
             stakeAddress=row[0]
             assets=row[1].split(" ")
 
             # update rewards if >= 7 days from previous update else don't do anything and print rewards were not updated
+            # first row should be the date when it is updated
+            earnedResources={} # resources earned by a particular stake address
+            for resource in resources:
+                earnedResources[resource]=0
+
+            # for each asset, compute each resource one by one
+            for asset in assets:
+                for resource in resources:
+                    temp=computeResources(stakeAddress,asset,assets,resource)
+
+
+
+
 
     pass
 
