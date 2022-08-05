@@ -13,7 +13,7 @@ import math
 # if planet - check for multiplier 
 # add resource for each asset 
 # print a log file tracking assets for each stake address
-
+maximum=[] # for debugging
 
 
 def fetchAssets(Policies):
@@ -74,6 +74,21 @@ def fetchAssets(Policies):
         #break # temporary for debugging 
     return stakeToAssetMap
 
+def sisterMultiplier(asset,assets,metadata):
+    global maximum
+    sisters=metadata['sisterPlanets']
+    if sisters=="none":
+        return 1
+    n=len(sisters)+1
+    
+    common= len(list(set(assets)&set(sisters)))+1
+
+    
+    
+    
+    return 1
+
+
 def computeResources(stakeAddress,asset,assets,resource):
     if asset=="1503":
         return 0
@@ -91,11 +106,23 @@ def computeResources(stakeAddress,asset,assets,resource):
     
     if resource not in metadata: # case of continent
         temp=0
+    elif "floating" in asset:
+        temp=2*metadata[resource]
     elif "continent" in asset:
-        temp=metadata["production rate"]
-    else: # planet and floating continent
-
-
+        temp=0.95*metadata["production rate"]
+    else: # planet
+        tier=metadata['Tier']
+        if tier=='A':
+            c=3
+        elif tier=='B':
+            c=2
+        else:
+            c=1
+        temp=c*metadata[resource]
+        temp=temp*sisterMultiplier(asset,assets,metadata)
+        
+    
+    return math.floor(temp)
 
 
 def calculateRewards(inputFile):
@@ -126,12 +153,7 @@ def calculateRewards(inputFile):
                 for resource in resources:
                     temp=computeResources(stakeAddress,asset,assets,resource)
 
-
-
-
-
-    pass
-
+    
             
 
 def printLogs(stakeToAssetMap):
@@ -154,3 +176,4 @@ if __name__=="__main__":
 
     calculateRewards("logs.csv")
 
+    
