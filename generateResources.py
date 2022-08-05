@@ -1,6 +1,7 @@
 import os,json
 import requests
-
+import csv
+import datetime
 # 4 tables, one for each resource
 # if tables absent, add tables
 
@@ -68,16 +69,26 @@ def fetchAssets(Policies):
 
     return stakeToAssetMap
 
+def calculateRewards(inputFile):
+    pass
+
 def printLogs(stakeToAssetMap):
     data=[]
     for stakeAddress in stakeToAssetMap:
-        data.append([stakeAddress," ".join(stakeToAssetMap[stakeAddress]]))
-
+        data.append([stakeAddress," ".join(stakeToAssetMap[stakeAddress],datetime.datetime.now()]))
+    file=open('logs.csv','w')
+    csvWriter=csv.writer(file,delimiter=',')
+    csvWriter.writerows(data)
+    file.close()
 
 
 if __name__=="__main__":
-    stakeToAssetMap=fetchAssets(["7371b76a7cfb71c5c70618fd2b27f357a6eb84c38ad4f92fed1164f2","0799a79aefe81aeb718e75982c26e1719d94fe75860b3ba184971428"])
+    d=input("take new snapshot ? ")
+    if d=="yes":
+        stakeToAssetMap=fetchAssets(["7371b76a7cfb71c5c70618fd2b27f357a6eb84c38ad4f92fed1164f2","0799a79aefe81aeb718e75982c26e1719d94fe75860b3ba184971428"])
 
-    # print out logs 
-    printLogs(stakeToAssetMap)
+        # print out logs 
+        printLogs(stakeToAssetMap)
+
+    calculateRewards("logs.csv")
 
