@@ -75,18 +75,36 @@ def fetchAssets(Policies):
     return stakeToAssetMap
 
 def sisterMultiplier(asset,assets,metadata):
-    global maximum
+    
     sisters=metadata['sisterPlanets']
     if sisters=="none":
         return 1
-    n=len(sisters)+1
+    n=len(sisters)+1 # total set size
     
-    common= len(list(set(assets)&set(sisters)))+1
+    common= len(list(set(assets)&set(sisters)))+1 # common planets + asset
 
+    k=1
+    if common>=13:
+        k=2.5
+    elif common>=10:
+        k=2
+    elif common>=7:
+        k=1.8
+    elif common>=4:
+        k=1.5
+    elif common>=2:
+        k=1.3
+    
+    kOptions=[1.3,1.5,1.8,2,2.5]
+
+    if common==n:
+        # full set extra boost
+        i=kOptions.index(k)
+        i=min(i+1,len(kOptions)-1)
+        k=kOptions[i]
     
     
-    
-    return 1
+    return k
 
 
 def computeResources(stakeAddress,asset,assets,resource):
@@ -104,13 +122,18 @@ def computeResources(stakeAddress,asset,assets,resource):
     with open(f'{path}Metadata/{asset}.metadata','r') as f:
         metadata=json.load(f)["721"]["<policy_id>"][asset]
     
-    if resource not in metadata: # case of continent
-        temp=0
-    elif "floating" in asset:
-        temp=2*metadata[resource]
-    elif "continent" in asset:
-        temp=0.95*metadata["production rate"]
+    if "floating" in asset: #floating continent
+        if resource!=metadata['resource']:
+            temp=0
+        else:
+            temp=int(metadata["productionRate"])
+    elif "continent" in asset: # continent
+        if resource!=metadata['resource']:
+            temp=0
+        else:
+            temp=0.95*int(metadata["production rate"])
     else: # planet
+        #print(asset)
         tier=metadata['Tier']
         if tier=='A':
             c=3
@@ -134,10 +157,7 @@ def calculateRewards(inputFile):
    
     with open(inputFile,"r") as csv_file:
         csv_reader=csv.reader(csv_file,delimiter=',')
-        i=0
-        j=0
         for row in csv_reader: # iterating over all stake addresses
-            
             stakeAddress=row[0]
             assets=row[1].split(" ")
             data[stakeAddress]={}
@@ -151,7 +171,10 @@ def calculateRewards(inputFile):
             # for each asset, compute each resource one by one
             for asset in assets:
                 for resource in resources:
-                    temp=computeResources(stakeAddress,asset,assets,resource)
+                    temp=computeResources(stakeAddress,asset,assets,resource) 
+                    earnedResources[resource]+=temp # add resource from this asset to the stakeAddress wallet
+                
+
 
     
             
