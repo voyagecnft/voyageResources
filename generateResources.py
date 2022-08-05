@@ -3,6 +3,7 @@ import requests
 import csv
 import datetime
 import time
+import math
 # 4 tables, one for each resource
 # if tables absent, add tables
 
@@ -73,24 +74,46 @@ def fetchAssets(Policies):
         #break # temporary for debugging 
     return stakeToAssetMap
 
-def computeResources(stakeAddress,asset,assets):
+def computeResources(stakeAddress,asset,assets,resource):
+    if asset=="1503":
+        return 0
      # compute a particular resource farmed from a particular asset for a particular stake address
     
-    pass
+    if "floating" in asset:
+        path="floating"
+    elif "continent" in asset:
+        path="continent"
+    else:
+        path="planet"
+    
+    with open(f'{path}Metadata/{asset}.metadata','r') as f:
+        metadata=json.load(f)["721"]["<policy_id>"][asset]
+    
+    if resource not in metadata: # case of continent
+        temp=0
+    elif "continent" in asset:
+        temp=metadata["production rate"]
+    else: # planet and floating continent
+
+
 
 
 def calculateRewards(inputFile):
     # open existing file and check current rewards
     resources=["Elixir","Rock","Crystal","Antimatter"]
     files=os.listdir('.')
+
+    data={} # info to be written // dic of dics
    
     with open(inputFile,"r") as csv_file:
         csv_reader=csv.reader(csv_file,delimiter=',')
         i=0
         j=0
         for row in csv_reader: # iterating over all stake addresses
+            
             stakeAddress=row[0]
             assets=row[1].split(" ")
+            data[stakeAddress]={}
 
             # update rewards if >= 7 days from previous update else don't do anything and print rewards were not updated
             # first row should be the date when it is updated
