@@ -35,7 +35,7 @@ def fetchAssets(Policies):
 
         while True:
             response=requests.get(f'{base_api}/assets/policy/{project_policy_id}?page={page}',headers=headers)
-            time.sleep(0.5)
+            #time.sleep(0.5)
             if len(response.json())==0:
                 break
             for asset in response.json():
@@ -57,7 +57,7 @@ def fetchAssets(Policies):
 
     for asset in Assets:
         response=requests.get(f'{base_api}/assets/{asset["asset"]}/addresses',headers=headers)
-        time.sleep(0.5)
+        #time.sleep(0.5)
         address=response.json()[0]['address']
         # used address
         
@@ -65,20 +65,27 @@ def fetchAssets(Policies):
             stakeAddress=stakeDict[address]
         else:
             stakeAddress=requests.get(f'{base_api}/addresses/{address}',headers=headers).json()["stake_address"]
-            time.sleep(0.5)
+            #time.sleep(0.5)
         print(asset["name"])
         if stakeAddress not in stakeToAssetMap:
             stakeToAssetMap[stakeAddress]=[]
         stakeToAssetMap[stakeAddress].append(asset["name"])
-
+        #break # temporary for debugging 
     return stakeToAssetMap
 
 def calculateRewards(inputFile):
+    # open existing file and check current rewards
+    stakeToAntimatter,stakeToCrystal,stakeToElixir,stakeToRock={},{},{},{}
+    
     with open(inputFile,"r") as csv_file:
         csv_reader=csv.reader(csv_file,delimiter=',')
         for row in csv_reader:
             stakeAddress=row[0]
             assets=row[1].split(" ")
+
+            # update rewards if >= 7 days from previous update else don't do anything and print rewards were not updated
+
+    pass
 
             
 
