@@ -174,9 +174,22 @@ def calculateRewards(inputFile):
                     temp=computeResources(stakeAddress,asset,assets,resource) 
                     earnedResources[resource]+=temp # add resource from this asset to the stakeAddress wallet
             data[stakeAddress]=earnedResources
-    print(data)
+    #print(data)
     return data
                 
+def updateRewards(data):
+    """
+    resource file
+    first line date
+    stake address to resource file
+    
+    """
+    curFiles=os.listdir('.')
+    print(data)
+    for resource in ["Elixir","Antimatter","Crystal","Rock"]:
+        
+        curData= [ [stakeAddress,data[stakeAddress][resource]] for stakeAddress in data ]
+        
 
 
     
@@ -200,6 +213,15 @@ if __name__=="__main__":
         # print out logs 
         printLogs(stakeToAssetMap)
 
-    calculateRewards("logs.csv")
-
+    data=calculateRewards("logs.csv")
     
+    # adding rewards to existing logs
+    
+    updateRewards(data)
+
+
+
+
+
+
+
