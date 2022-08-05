@@ -17,7 +17,10 @@ def fetchAssets(Policies):
     with open('blockfrostKey.txt','r') as f:
         key=f.read()
         f.close()
+    base_api='https://cardano-mainnet.blockfrost.io/api/v0/'
+    blockfrost_api_key=key
     
+    headers={'project_id':f'{blockfrost_api_key}'}
     Assets=[] # array of dics , plaintext name : policy+hexname
 
     def addAssetsOfPolicyID(Assets,policyID,key):
@@ -46,10 +49,35 @@ def fetchAssets(Policies):
         addAssetsOfPolicyID(Assets,policyID,key)
     
     stakeToAssetMap={}
-    
+    stakeDict={} # saving api calls mapping used address to stake address , DP
+    # mapping to stake key
+
+    for asset in Assets:
+        response=requests.get(f'{base_api}/assets/{asset["asset"]}/addresses',headers=headers)
+        address=response.json()[0]['address']
+        # used address
+        
+        if address in stakeDict:
+            stakeAddress=stakeDict[address]
+        else:
+            stakeAddress=requests.get(f'{base_api}/addresses/{address}',headers=headers).json()["stake_address"]
+        print(asset["name"])
+        if stakeAddress not in stakeToAssetMap:
+            stakeToAssetMap[stakeAddress]=[]
+        stakeToAssetMap[stakeAddress].append(asset["name"])
+
+    return stakeToAssetMap
+
+def printLogs(stakeToAssetMap):
+    data=[]
+    for stakeAddress in stakeToAssetMap:
+        data.append([stakeAddress," ".join(stakeToAssetMap[stakeAddress]]))
 
 
 
 if __name__=="__main__":
     stakeToAssetMap=fetchAssets(["7371b76a7cfb71c5c70618fd2b27f357a6eb84c38ad4f92fed1164f2","0799a79aefe81aeb718e75982c26e1719d94fe75860b3ba184971428"])
+
+    # print out logs 
+    printLogs(stakeToAssetMap)
 
