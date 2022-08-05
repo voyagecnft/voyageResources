@@ -2,6 +2,7 @@ import os,json
 import requests
 import csv
 import datetime
+import time
 # 4 tables, one for each resource
 # if tables absent, add tables
 
@@ -34,6 +35,7 @@ def fetchAssets(Policies):
 
         while True:
             response=requests.get(f'{base_api}/assets/policy/{project_policy_id}?page={page}',headers=headers)
+            time.sleep(0.5)
             if len(response.json())==0:
                 break
             for asset in response.json():
@@ -55,6 +57,7 @@ def fetchAssets(Policies):
 
     for asset in Assets:
         response=requests.get(f'{base_api}/assets/{asset["asset"]}/addresses',headers=headers)
+        time.sleep(0.5)
         address=response.json()[0]['address']
         # used address
         
@@ -62,6 +65,7 @@ def fetchAssets(Policies):
             stakeAddress=stakeDict[address]
         else:
             stakeAddress=requests.get(f'{base_api}/addresses/{address}',headers=headers).json()["stake_address"]
+            time.sleep(0.5)
         print(asset["name"])
         if stakeAddress not in stakeToAssetMap:
             stakeToAssetMap[stakeAddress]=[]
@@ -70,12 +74,18 @@ def fetchAssets(Policies):
     return stakeToAssetMap
 
 def calculateRewards(inputFile):
-    pass
+    with open(inputFile,"r") as csv_file:
+        csv_reader=csv.reader(csv_file,delimiter=',')
+        for row in csv_reader:
+            stakeAddress=row[0]
+            assets=row[1].split(" ")
+
+            
 
 def printLogs(stakeToAssetMap):
     data=[]
     for stakeAddress in stakeToAssetMap:
-        data.append([stakeAddress," ".join(stakeToAssetMap[stakeAddress],datetime.datetime.now()]))
+        data.append([stakeAddress," ".join(stakeToAssetMap[stakeAddress]),datetime.datetime.now()])
     file=open('logs.csv','w')
     csvWriter=csv.writer(file,delimiter=',')
     csvWriter.writerows(data)
