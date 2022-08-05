@@ -126,12 +126,12 @@ def computeResources(stakeAddress,asset,assets,resource):
         if resource!=metadata['resource']:
             temp=0
         else:
-            temp=int(metadata["productionRate"])
+            temp=2*int(metadata["productionRate"])
     elif "continent" in asset: # continent
         if resource!=metadata['resource']:
             temp=0
         else:
-            temp=0.95*int(metadata["production rate"])
+            temp=0.95*float(metadata["production rate"])
     else: # planet
         #print(asset)
         tier=metadata['Tier']
@@ -173,6 +173,9 @@ def calculateRewards(inputFile):
                 for resource in resources:
                     temp=computeResources(stakeAddress,asset,assets,resource) 
                     earnedResources[resource]+=temp # add resource from this asset to the stakeAddress wallet
+            data[stakeAddress]=earnedResources
+    print(data)
+    return data
                 
 
 
