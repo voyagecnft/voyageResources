@@ -190,7 +190,8 @@ def updateRewards(data):
         
         curData= {}
         for stake in data:
-            curData[stake]=data[stake][resource]
+            if stake!="":
+                curData[stake]=data[stake][resource]
         
         
         if f'{resource}.csv' in curFiles: # previous record exists
@@ -201,8 +202,9 @@ def updateRewards(data):
                     prevDate=datetime.datetime.fromisoformat(row[0])
                     
                     break
+                f.close()
                 delta=datetime.datetime.now()-prevDate
-                if delta <= datetime.timedelta(days=7):
+                if delta <= datetime.timedelta(seconds=7):
                     print(f"last {resource}  update less than 7 days ago ")
                 # if there has been more than less than 7 days , write it has been less than 7 days since updation and exit
                 else:
@@ -229,6 +231,9 @@ def updateRewards(data):
                         if stakeAddress not in prevData:
                             csvWriter.writerow([stakeAddress,curData[stakeAddress]])
                     
+                    for key in curData:
+                        if key=="":
+                            print("yes")
 
 
                 
