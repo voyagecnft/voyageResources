@@ -242,7 +242,7 @@ def updateRewards(data):
                 csvWriter.writerow([stakeAddress,curData[stakeAddress]])
             f.close()
 
-            print(f"{resource} updated!")
+            print(f"{resource} added!")
             
 
 
