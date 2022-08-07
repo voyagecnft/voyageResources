@@ -66,7 +66,7 @@ def fetchAssets(Policies):
             stakeAddress=stakeDict[address]
         else:
             stakeAddress=requests.get(f'{base_api}/addresses/{address}',headers=headers).json()["stake_address"]
-            #time.sleep(0.5)
+            #   time.sleep(0.5)
         print(asset["name"])
         if stakeAddress not in stakeToAssetMap:
             stakeToAssetMap[stakeAddress]=[]
@@ -185,11 +185,27 @@ def updateRewards(data):
     
     """
     curFiles=os.listdir('.')
-    print(data)
+    
     for resource in ["Elixir","Antimatter","Crystal","Rock"]:
         
-        curData= [ [stakeAddress,data[stakeAddress][resource]] for stakeAddress in data ]
+        curData= {}
+        for stake in data:
+            curData[stake]=data[stake][resource]
         
+        
+        if f'{resource}.csv' in curFiles: # previous record exists
+            with open(f"{resource}.csv","r") as f:
+                csv_reader=csv.reader(f,delimiter=',')
+                for row in csv_reader: # only need to check oneRow for 
+                    prevDate=datetime.datetime.fromisoformat(row[0])
+                
+                
+        else:
+            
+            # write in new file
+            pass
+
+
 
 
     
@@ -198,7 +214,7 @@ def updateRewards(data):
 def printLogs(stakeToAssetMap):
     data=[]
     for stakeAddress in stakeToAssetMap:
-        data.append([stakeAddress," ".join(stakeToAssetMap[stakeAddress]),datetime.datetime.now()])
+        data.append([stakeAddress," ".join(stakeToAssetMap[stakeAddress]),datetime.datetime.now().isoformat()])
     file=open('logs.csv','w')
     csvWriter=csv.writer(file,delimiter=',')
     csvWriter.writerows(data)
