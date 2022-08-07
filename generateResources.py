@@ -196,14 +196,54 @@ def updateRewards(data):
         if f'{resource}.csv' in curFiles: # previous record exists
             with open(f"{resource}.csv","r") as f:
                 csv_reader=csv.reader(f,delimiter=',')
+                prevDate=""
                 for row in csv_reader: # only need to check oneRow for 
                     prevDate=datetime.datetime.fromisoformat(row[0])
+                    
+                    break
+                delta=datetime.datetime.now()-prevDate
+                if delta <= datetime.timedelta(days=7):
+                    print(f"last {resource}  update less than 7 days ago ")
+                # if there has been more than less than 7 days , write it has been less than 7 days since updation and exit
+                else:
+                    print(f"{resource} updated!")
+
+                    f=open(f'{resource}.csv',"r")
+                    prevData={}
+                    csv_reader=csv.reader(f,delimiter=",")
+                    for row in csv_reader:
+                        if "stake" in row[0]: # ignoring the first row containing date information
+                            prevData[row[0]]=float(row[1])
+                    
+                    f.close()
+
+                    f=open(f'{resource}.csv',"w")
+                    csvWriter=csv.writer(f,delimiter=",")
+                    csvWriter.writerow([datetime.datetime.now().isoformat()]*2)
+                    for stakeAddress in prevData:
+                        if stakeAddress in curData:
+                            csvWriter.writerow([stakeAddress,prevData[stakeAddress]+float(curData[stakeAddress])])
+                        else:
+                            csvWriter.writerow([stakeAddress,prevData[stakeAddress]])
+                    for stakeAddress in curData:
+                        if stakeAddress not in prevData:
+                            csvWriter.writerow([stakeAddress,curData[stakeAddress]])
+                    
+
+
                 
                 
         else:
             
-            # write in new file
-            pass
+            f=open(f'{resource}.csv',"w")
+            csvWriter=csv.writer(f,delimiter=",")
+            csvWriter.writerow([datetime.datetime.now().isoformat()]*2)
+            for stakeAddress in curData:
+                csvWriter.writerow([stakeAddress,curData[stakeAddress]])
+            f.close()
+
+            print(f"{resource} updated!")
+            
 
 
 

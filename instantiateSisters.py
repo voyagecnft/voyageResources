@@ -7,4 +7,4 @@ print(now)
 
 earlierDate=datetime.datetime.fromisoformat(now)
 
-print((datetime.datetime.now()-earlierDate).day())
+print(datetime.datetime.now()-earlierDate)
