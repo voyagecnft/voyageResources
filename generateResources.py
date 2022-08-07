@@ -37,7 +37,7 @@ def fetchAssets(Policies):
         while True:
             response=requests.get(f'{base_api}/assets/policy/{project_policy_id}?page={page}',headers=headers)
             #time.sleep(0.5)
-            if len(response.json())==0:
+            if len(response.json())==0: # assets of particular policy have been exhausted
                 break
             for asset in response.json():
                 temp={}
@@ -66,6 +66,7 @@ def fetchAssets(Policies):
             stakeAddress=stakeDict[address]
         else:
             stakeAddress=requests.get(f'{base_api}/addresses/{address}',headers=headers).json()["stake_address"]
+            stakeDict[address]=stakeAddress
             #   time.sleep(0.5)
         print(asset["name"])
         if stakeAddress not in stakeToAssetMap:
@@ -81,7 +82,7 @@ def sisterMultiplier(asset,assets,metadata):
         return 1
     n=len(sisters)+1 # total set size
     
-    common= len(list(set(assets)&set(sisters)))+1 # common planets + asset
+    common= len(list(set(assets)&set(sisters)))+1 # set intersection
 
     k=1
     if common>=13:
@@ -97,7 +98,7 @@ def sisterMultiplier(asset,assets,metadata):
     
     kOptions=[1.3,1.5,1.8,2,2.5]
 
-    if common==n:
+    if common==n: # not possible in case k=1
         # full set extra boost
         i=kOptions.index(k)
         i=min(i+1,len(kOptions)-1)
@@ -108,7 +109,7 @@ def sisterMultiplier(asset,assets,metadata):
 
 
 def computeResources(stakeAddress,asset,assets,resource):
-    if asset=="1503":
+    if asset=="1503": # wrongly minted assed
         return 0
      # compute a particular resource farmed from a particular asset for a particular stake address
     
@@ -151,8 +152,6 @@ def computeResources(stakeAddress,asset,assets,resource):
 def calculateRewards(inputFile):
     # open existing file and check current rewards
     resources=["Elixir","Rock","Crystal","Antimatter"]
-    files=os.listdir('.')
-
     data={} # info to be written // dic of dics
    
     with open(inputFile,"r") as csv_file:
@@ -162,9 +161,8 @@ def calculateRewards(inputFile):
             assets=row[1].split(" ")
             data[stakeAddress]={}
 
-            # update rewards if >= 7 days from previous update else don't do anything and print rewards were not updated
-            # first row should be the date when it is updated
-            earnedResources={} # resources earned by a particular stake address
+    
+            earnedResources={} #each resource earned by a particular stake address
             for resource in resources:
                 earnedResources[resource]=0
 
@@ -175,7 +173,7 @@ def calculateRewards(inputFile):
                     earnedResources[resource]+=temp # add resource from this asset to the stakeAddress wallet
             data[stakeAddress]=earnedResources
     #print(data)
-    return data
+    return data # {stakeKey1 : {resource 1:val, resoure2:val ........}, stakekey2: ........}
                 
 def updateRewards(data):
     """
@@ -190,7 +188,7 @@ def updateRewards(data):
         
         curData= {}
         for stake in data:
-            if stake!="":
+            if stake!="": # excluding last line from logs file
                 curData[stake]=data[stake][resource]
         
         
@@ -198,13 +196,13 @@ def updateRewards(data):
             with open(f"{resource}.csv","r") as f:
                 csv_reader=csv.reader(f,delimiter=',')
                 prevDate=""
-                for row in csv_reader: # only need to check oneRow for 
+                for row in csv_reader: # only need to check the first row for date 
                     prevDate=datetime.datetime.fromisoformat(row[0])
                     
                     break
                 f.close()
                 delta=datetime.datetime.now()-prevDate
-                if delta <= datetime.timedelta(seconds=7):
+                if delta <= datetime.timedelta(days=7):
                     print(f"last {resource}  update less than 7 days ago ")
                 # if there has been more than less than 7 days , write it has been less than 7 days since updation and exit
                 else:
@@ -223,17 +221,15 @@ def updateRewards(data):
                     csvWriter=csv.writer(f,delimiter=",")
                     csvWriter.writerow([datetime.datetime.now().isoformat()]*2)
                     for stakeAddress in prevData:
-                        if stakeAddress in curData:
+                        if stakeAddress in curData: # present in both weeks
                             csvWriter.writerow([stakeAddress,prevData[stakeAddress]+float(curData[stakeAddress])])
-                        else:
+                        else: # only present in prev week
                             csvWriter.writerow([stakeAddress,prevData[stakeAddress]])
-                    for stakeAddress in curData:
+                    for stakeAddress in curData: # only present in curWeek
                         if stakeAddress not in prevData:
                             csvWriter.writerow([stakeAddress,curData[stakeAddress]])
                     
-                    for key in curData:
-                        if key=="":
-                            print("yes")
+                    
 
 
                 
