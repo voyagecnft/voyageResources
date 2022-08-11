@@ -2,4 +2,5 @@
 
 blockfrostKey.txt 
 
-*.py
+generateResources.py
+instantiateSisters.py
