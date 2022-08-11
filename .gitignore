@@ -1,3 +1,5 @@
 # contains the project key
 
 blockfrostKey.txt 
+
+*.py
