@@ -1,7 +1,7 @@
 # contains the project key
 
 blockfrostKey.txt 
-
-generateResources.py
+#generateResources.py
 instantiateSisters.py
 awsKey.txt
+rootkey.csv
